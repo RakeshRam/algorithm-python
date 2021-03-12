@@ -1,7 +1,9 @@
 # Collection Of Sorting Algorithims. 
 # https://en.wikipedia.org/wiki/Sorting_algorithm
 
+import time
 from itertools import chain
+
 
 class Sorts:
     """
@@ -28,12 +30,24 @@ class Sorts:
     def __init__(self, lst):
         self.lst = lst
 
+    def __lst_cpy(self):
+        return self.lst.copy()
+
     def __get_max(self):
         return max(self.lst)
 
     def __get_len(self):
         return len(self.lst)
 
+    def __timediff(f):
+        def time_calc(self):
+            start = time.time()
+            rv = f(self)
+            print(f"Total Time({f.__name__}): {time.time() - start}")
+            return rv
+        return time_calc
+
+    @__timediff
     def radix_sort(self):
         """
         Radix Sort: T(n) = O(d*(n+b))
@@ -52,14 +66,16 @@ class Sorts:
         >>> item //10 ** (n) % 10
         """
         n_digits = str(self.__get_max())                                 # Get max number
+        lst_cpy = self.__lst_cpy()                                       # Sort on copy of list
         for n in range(len(n_digits)):                                   # Iterate each digit
             temp = [[] for _ in range(10)]                               # Create Bucket 
-            for item in self.lst:
+            for item in lst_cpy:
                 num = item //10 ** (n) % 10                              # Formula to get each digit in number
                 temp[num].append(item)
-            self.lst = chain.from_iterable(temp)                         # Flatten List
-        return list(self.lst)
+            lst_cpy = chain.from_iterable(temp)                          # Flatten List
+        return list(lst_cpy)
 
+    @__timediff
     def count_sort(self):
         """
         Count Sort: 
@@ -67,13 +83,41 @@ class Sorts:
         """
         pass
 
+    def __merge_sort(self, data, first, last):
+        if first < last:                                  # Check to confirm multiple elements in list
+            middle = (first+last)//2                      # Get middle element in list
+            self.__merge_sort(data, first, middle)        # Sort Left side
+            self.__merge_sort(data, middle+1, last)       # Sort Right side
+            self.__merge(data, first, middle, last)       # Merge list
+
+    def __merge(self, data, first, middle, last):
+        L = data[first: middle+1]
+        R = data[middle+1: last+1]
+
+        R.append(99999999)                                  # WIll be ignored because not in original list
+        L.append(99999999)                                  # WIll be ignored because not in original list
+        i = j = 0
+        for k in range(first, last+1):
+            if L[i] <= R[j]:
+                # Left List
+                data[k] = L[i]
+                i += 1
+            else:
+                # Right List
+                data[k] = R[j]
+                j += 1
+
+    @__timediff
     def merge_sort(self):
         """
         Merge Sort: O(n log n)
         https://en.wikipedia.org/wiki/Merge_sort
         """
-        pass
+        lst_cpy = self.__lst_cpy()
+        self.__merge_sort(lst_cpy, 0, self.__get_len()-1)
+        return lst_cpy
 
+    @__timediff
     def quick_sort(self):
         """
         Quick Sort: O(n log n) 
@@ -81,6 +125,7 @@ class Sorts:
         """
         pass
 
+    @__timediff
     def heap_sort(self):
         """
         Heap Sort: O(n log n) 
@@ -88,6 +133,7 @@ class Sorts:
         """
         pass
 
+    @__timediff
     def bubble_sort(self):
         """
         Bubble Sort: О(n2)
@@ -95,39 +141,44 @@ class Sorts:
         https://en.wikipedia.org/wiki/Bubble_sort
         """
         length = self.__get_len() - 1
+        lst_cpy = self.__lst_cpy()
         for i in range(0, length):
             for j in range(0,  length-i):
-                if self.lst[j] > self.lst[j + 1]:                                 # Compare each element until all values are sorted
-                    self.lst[j], self.lst[j+1] = self.lst[j+1], self.lst[j]       # Swap
-        return self.lst 
+                if lst_cpy[j] > lst_cpy[j + 1]:                                 # Compare each element until all values are sorted
+                    lst_cpy[j], lst_cpy[j+1] = lst_cpy[j+1], lst_cpy[j]       # Swap
+        return lst_cpy 
 
+    @__timediff
     def insertion_sort(self):
         """
         Insertion Sort: О(n2)
                      n: Number of elements in the list.
         https://en.wikipedia.org/wiki/Insertion_sort
         """
+        lst_cpy = self.__lst_cpy()
         for i in range(1, self.__get_len()):
             j = i-1                                                               # Select element
-            while self.lst[j] > self.lst[j+1] and j >= 0:                         # Check until the first value is in correct place & also make sure the index does not got to negative.
-                self.lst[j], self.lst[j+1] = self.lst[j+1], self.lst[j]           # Swap         
+            while lst_cpy[j] > lst_cpy[j+1] and j >= 0:                         # Check until the first value is in correct place & also make sure the index does not got to negative.
+                lst_cpy[j], lst_cpy[j+1] = lst_cpy[j+1], lst_cpy[j]           # Swap         
                 j -= 1                                                            # Decrement the index
-        return self.lst
+        return lst_cpy
 
+    @__timediff
     def selection_sort(self):
         """
         Selection Sort:  O(n2)
                      n: Number of elements in the list.
         https://en.wikipedia.org/wiki/Selection_sort 
         """
+        lst_cpy = self.__lst_cpy()
         for i in range(0, self.__get_len()-1):             # Start from first element
             min_index = i
             for j in range(i+1, self.__get_len()):         # Check from second element
-                if self.lst[j] < self.lst[min_index]:      # Compare which is minimum
+                if lst_cpy[j] < lst_cpy[min_index]:      # Compare which is minimum
                     min_index = j
 
             if min_index != i:                             # Only swap if the index are different
-                self.lst[i], self.lst[min_index] = self.lst[min_index], self.lst[i]    # Swap
-        return self.lst
+                lst_cpy[i], lst_cpy[min_index] = lst_cpy[min_index], lst_cpy[i]    # Swap
+        return lst_cpy
 
 
