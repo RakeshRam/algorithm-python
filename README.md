@@ -11,7 +11,7 @@ Collection of Algorithms in Python
 
 ## <u>Usage</u>
 
-```bash
+```python
 from sorts.sort_tools import Sorts
 from random import shuffle
 
