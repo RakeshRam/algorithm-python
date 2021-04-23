@@ -60,6 +60,6 @@ data.add('Spiderman', '567-2188')
 data.add('BlackPanther', '777-8888')
 
 print(data)
-print(data.get('BlackPanther'), "************8")
+print(data.get('BlackPanther'))
 print(data.delete('BlackPanther'))
 print(data.pprint())
