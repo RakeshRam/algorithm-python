@@ -1,4 +1,5 @@
 # Dijkstra’s Shortest Path Algorithm
+# Single Source Shortest Path(SSSP) Algo
 # Requirements
 #  DAG
 #  Positive edges
@@ -12,23 +13,25 @@ def dijkstras(start, graph):
     if start not in graph:
         return "NA"
 
+    sp_map = {}                      # Shortest Path Map
     dist = {g: inf for g in graph}   # Initialize all nodes with infinity
     dist[start] = 0                  # Starting Node
     # Priority Queue with tuple(distance, node)
-    pq = [(0, start)]
+    pq = [(start, 0)]
     while pq:
-        cur_dis, cur_node = pq.pop(0)   # Get first element in queue
+        cur_node, cur_dis = pq.pop(0)   # Get first element in queue
 
         if cur_dis > dist[cur_node]:    # Check if current distance gt mapped distance
             continue                    # Skip
 
         for n, d in graph[cur_node].items():  # Get neighboring nodes and distance
-            distance = cur_dis + d            # current node distance + neighbor distance
-            if distance < dist[n]:    # Check if distance lt mapped distance
-                dist[n] = distance    # Update mapped distance
-                pq.append((distance, n))   # Add to PQ
+            new_distance = cur_dis + d            # current node distance + neighbor distance
+            if new_distance < dist[n]:    # Check if distance lt mapped distance
+                dist[n] = new_distance    # Update mapped distance
+                pq.append((n, new_distance))   # Add to PQ
+                sp_map.setdefault(n, []).insert(0, cur_node)  # Update Path map
 
-    return dist
+    return dist, sp_map
 
 
 graph = {'A': {'C': 5, 'D': 1, 'E': 2}, 'B': {'H': 1, 'G': 3}, 'C': {'I': 2, 'D': 3, 'A': 5},
